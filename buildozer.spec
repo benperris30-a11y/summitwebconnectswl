@@ -5,7 +5,7 @@ package.name = summitwebview
 package.domain = org.soundworkslakes
 
 source.dir = .
-source.include_exts = py,png,jpg,jpeg,kv,atlas,json
+source.include_exts = py,png,jpg,jpeg,kv,atlas,json,xml
 
 version = 0.1
 
@@ -26,8 +26,12 @@ android.accept_sdk_license = True
 android.enable_androidx = True
 android.allow_backup = False
 
-# Force Android to allow HTTP cleartext traffic natively
+# Fallback cleartext toggle
 android.uses_cleartext_traffic = True
+
+# Map and inject the custom Network Security Config into the compiled Android manifest structure
+android.manifest_application_arguments = android:networkSecurityConfig="@xml/network_security_config"
+android.add_resources = network_security_config.xml:res/xml/network_security_config.xml
 
 log_level = 2
 
