@@ -25,6 +25,12 @@ android.ndk_api = 24
 
 android.archs = arm64-v8a,armeabi-v7a
 
+# master's current commit pins Kivy's build-time Cython requirement to
+# <=3.0.0, which resolves to a known-broken Cython 3.0.0 release (generates
+# malformed OpenGL calls, e.g. glVertexAttribPointer). develop has since
+# loosened this pin, avoiding the broken exact version.
+p4a.branch = develop
+
 android.accept_sdk_license = True
 
 android.enable_androidx = True
