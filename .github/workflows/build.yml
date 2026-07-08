@@ -9,6 +9,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
+    timeout-minutes: 90
 
     steps:
       - uses: actions/checkout@v4
@@ -24,6 +25,16 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Cache buildozer global + local dirs
+        uses: actions/cache@v4
+        with:
+          path: |
+            .buildozer
+            ~/.buildozer
+          key: buildozer-${{ hashFiles('buildozer.spec') }}
+          restore-keys: |
+            buildozer-
+
       - name: Install Linux dependencies
         run: |
           sudo apt-get update
@@ -31,7 +42,7 @@ jobs:
             git zip unzip openjdk-17-jdk \
             autoconf automake libtool pkg-config \
             zlib1g-dev libncurses5-dev \
-            libncursesw5-dev libtinfo5 cmake \
+            libncursesw5-dev cmake \
             libffi-dev libssl-dev \
             python3-pip python3-setuptools \
             python3-wheel python3-venv
@@ -46,7 +57,7 @@ jobs:
         env:
           APP_ANDROID_ACCEPT_SDK_LICENSE: "1"
         run: |
-          buildozer android debug
+          yes | buildozer -v android debug
 
       - uses: actions/upload-artifact@v4
         with:
