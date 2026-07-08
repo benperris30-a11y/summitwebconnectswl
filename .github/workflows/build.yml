@@ -58,6 +58,8 @@ jobs:
       - name: Build APK
         env:
           APP_ANDROID_ACCEPT_SDK_LICENSE: "1"
+          PIP_USE_DEPRECATED: legacy-resolver
+          PIP_NO_CACHE_DIR: "1"
         run: |
           buildozer -v android debug
 
