@@ -1,20 +1,40 @@
 [app]
+
 title = Summit WebViewer
+
 package.name = summitwebview
 package.domain = org.soundworkslakes
+
 source.dir = .
-source.include_exts = py,png,jpg,kv,atlas,json
+source.include_exts = py,png,jpg,jpeg,kv,atlas,json
+
 version = 0.1
-requirements = python3, kivy, requests, urllib3, chardet, idna, certifi, pyjnius, android
+
+requirements = python3,kivy==2.3.0,requests,pyjnius
+
 orientation = portrait
+
 fullscreen = 1
+
 android.permissions = INTERNET
+
+android.api = 34
+android.minapi = 24
+android.ndk = 25b
+android.ndk_api = 24
+
+android.archs = arm64-v8a,armeabi-v7a
+
+android.accept_sdk_license = True
+
+android.enable_androidx = True
+
+android.allow_backup = False
+
 android.uses_cleartext_traffic = True
-android.api = 33
-android.minapi = 21
-android.ndk_api = 21
-android.archs = arm64-v8a, armeabi-v7a
+
+log_level = 2
 
 [buildozer]
-log_level = 2
+
 warn_on_root = 1
