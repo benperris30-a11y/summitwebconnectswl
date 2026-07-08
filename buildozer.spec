@@ -10,7 +10,7 @@ source.include_exts = py,png,jpg,jpeg,kv,atlas,json
 
 version = 0.1
 
-requirements = python3,kivy==2.3.0,requests,pyjnius
+requirements = python3==3.11.9,hostpython3==3.11.9,kivy==2.3.0,requests,pyjnius
 
 orientation = portrait
 
