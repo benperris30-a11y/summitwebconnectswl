@@ -33,9 +33,9 @@ jobs:
             .buildozer/android/platform/android-ndk-r25b
             .buildozer/android/packages
             ~/-buildozer
-          key: buildozer-v3-${{ hashFiles('buildozer.spec') }}
+          key: buildozer-v4-${{ hashFiles('buildozer.spec') }}
           restore-keys: |
-            buildozer-v3-
+            buildozer-v4-
 
       - name: Install Linux dependencies
         run: |
