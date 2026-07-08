@@ -10,7 +10,7 @@ source.include_exts = py,png,jpg,jpeg,kv,atlas,json
 
 version = 0.1
 
-requirements = python3==3.11.9,hostpython3==3.11.9,kivy==2.3.0,requests,pyjnius
+requirements = python3,kivy==2.3.0,requests,pyjnius
 
 orientation = portrait
 
@@ -31,7 +31,8 @@ android.enable_androidx = True
 
 android.allow_backup = False
 
-android.uses_cleartext_traffic = True
+# Force the Android Manifest application tag to permit HTTP cleartext connections
+android.manifest_application_arguments = android:usesCleartextTraffic="true"
 
 log_level = 2
 
