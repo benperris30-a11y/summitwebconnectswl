@@ -1,7 +1,6 @@
 [app]
 
 title = Summit WebViewer
-
 package.name = summitwebview
 package.domain = org.soundworkslakes
 
@@ -13,7 +12,6 @@ version = 0.1
 requirements = python3==3.11.9,hostpython3==3.11.9,kivy==2.3.0,requests,pyjnius
 
 orientation = portrait
-
 fullscreen = 1
 
 android.permissions = INTERNET
@@ -24,18 +22,14 @@ android.ndk = 25b
 android.ndk_api = 24
 
 android.archs = arm64-v8a,armeabi-v7a
-
 android.accept_sdk_license = True
-
 android.enable_androidx = True
-
 android.allow_backup = False
 
-# Force the Android Manifest application tag to permit HTTP cleartext connections
-android.manifest_application_arguments = android:usesCleartextTraffic="true"
+# Force Android to allow HTTP cleartext traffic natively
+android.uses_cleartext_traffic = True
 
 log_level = 2
 
 [buildozer]
-
 warn_on_root = 1
