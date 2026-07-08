@@ -15,18 +15,35 @@ from kivy.utils import platform
 
 # Hook into native Android elements
 if platform == 'android':
-    from jnius import autoclass
+    from jnius import autoclass, PythonJavaClass, java_method
     from android.runnable import run_on_ui_thread
     WebView = autoclass('android.webkit.WebView')
     WebViewClient = autoclass('android.webkit.WebViewClient')
     LayoutParams = autoclass('android.view.ViewGroup$LayoutParams')
     activity = autoclass('org.kivy.android.PythonActivity').mActivity
    
-    # Isolate the webview data directory immediately for clean Android runtime stability
     try:
         WebView.setDataDirectorySuffix("summit_webview_isolated")
     except Exception as e:
         print(f"Directory suffix already set or skipped: {e}")
+
+    # Explicitly interface a dynamic Java proxy to strip out cleartext strict policies
+    class CustomBypassClient(PythonJavaClass):
+        __javainterfaces__ = ['android/webkit/WebViewClient']
+        __javacontext__ = 'app'
+
+        def __init__(self):
+            super(CustomBypassClient, self).__init__()
+
+        @java_method('(Landroid/webkit/WebView;Ljava/lang/String;)Z')
+        def shouldOverrideUrlLoading(self, view, url):
+            view.loadUrl(url)
+            return True
+
+        @java_method('(Landroid/webkit/WebView;Landroid/webkit/SslErrorHandler;Landroid/net/http/SslError;)V')
+        def onReceivedSslError(self, view, handler, error):
+            handler.proceed()
+
 else:
     def run_on_ui_thread(func):
         return func
@@ -62,6 +79,10 @@ class SummitApp(App):
         self.list_scroll = ScrollView(size_hint=(1, 0.4))
         self.profile_list_layout = BoxLayout(orientation='vertical', size_hint_y=None, spacing=5)
         self.profile_list_layout.bind(minimum_height=self.profile_list_layout.setter('height'))
+        self.list_scroll.add_widget(self.list_scroll.children[0] if self.list_scroll.children else self.profile_list_layout)
+        
+        # Fixed layout structure assignment
+        self.list_scroll.clear_widgets()
         self.list_scroll.add_widget(self.profile_list_layout)
         self.main_layout.add_widget(self.list_scroll)
 
@@ -203,13 +224,14 @@ class SummitApp(App):
             settings.setUseWideViewPort(True)
             settings.setLoadWithOverviewMode(True)
             
-            # Instruct WebView to natively render standard HTTP/Mixed content streams
             try:
                 settings.setMixedContentMode(0) # MIXED_CONTENT_ALWAYS_ALLOW
             except:
                 pass
 
-            self.native_webview.setWebViewClient(WebViewClient())
+            # Attach our secure dynamic runtime bypass client
+            self.client_instance = CustomBypassClient()
+            self.native_webview.setWebViewClient(self.client_instance)
            
             layout_params = LayoutParams(int(-1), int(-1))
             activity.addContentView(self.native_webview, layout_params)
@@ -223,7 +245,7 @@ class SummitApp(App):
         Window.bind(on_keyboard=self._handle_back_button)
 
     def _handle_back_button(self, window, key, *args):
-        if key == 27: # Android Back Button
+        if key == 27: 
             if self.native_webview:
                 self._close_webview()
                 return True
