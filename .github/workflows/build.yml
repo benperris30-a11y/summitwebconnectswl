@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
     - uses: actions/checkout@v4
@@ -18,7 +18,29 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Build APK with Buildozer Action
-      uses: s0md3v/buildozer-action@v1
+    - name: Set up Python
+      uses: actions/setup-python@v5
       with:
-        image: 'ubuntu-20.04'
+        python-version: '3.11'
+
+    - name: Install Android Build Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y git zip unzip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev tk-dev libgdbm-compat-dev liblzma-dev lzma
+
+    - name: Install Buildozer and Cython
+      run: |
+        pip install --upgrade pip
+        pip install "cython<3.0.0" buildozer
+
+    - name: Build APK with Buildozer
+      run: |
+        buildozer android debug
+      env:
+        APP_ANDROID_ACCEPT_SDK_LICENSE: "1"
+
+    - name: Upload APK Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: package
+        path: bin/*.apk
