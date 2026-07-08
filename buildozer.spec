@@ -20,7 +20,12 @@ android.permissions = INTERNET
 
 android.api = 34
 android.minapi = 24
-android.ndk = 25b
+# python-for-android's develop branch (see p4a.branch below) now assumes a
+# newer NDK layout - e.g. the libthorvg recipe globs for a clang runtime
+# directory that only exists from r26+ onwards. r25b throws
+# "IndexError: list index out of range" in that recipe. p4a's own docs
+# recommend r28c as the current minimum, so pin to that instead.
+android.ndk = 28c
 android.ndk_api = 24
 
 android.archs = arm64-v8a,armeabi-v7a
